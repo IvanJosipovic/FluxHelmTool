@@ -1,0 +1,12 @@
+@page "/"
+@using System.IO
+@using System.Net.Http
+@using System.Net
+@using YamlDotNet.RepresentationModel
+@using YamlDotNet.Serialization
+
+<AgnoInputFile OnFileChange="HandleSelection"  />
+
+<button @onclick="myButton">Fetch</button>
+
+<p>@status</p>

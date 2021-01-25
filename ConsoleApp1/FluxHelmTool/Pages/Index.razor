@@ -1,0 +1,43 @@
+﻿@page "/"
+@using System.IO
+@using System.Net.Http
+@using System.Net
+@using YamlDotNet.RepresentationModel
+
+<button @onclick="myButton">Fetch</button>
+
+<AgnoInputFile OnFileChange="HandleSelection" />
+
+<p>@status</p>
+
+@code {
+    string status;
+
+    async Task HandleSelection(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            var ms = new MemoryStream();
+            await file.Data.CopyToAsync(ms);
+
+            status = $"Finished loading {file.Size} bytes from {file.Name}";
+        }
+    }
+
+    async Task myButton()
+    {
+        HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://cors-anywhere.herokuapp.com/https://charts.bitnami.com/bitnami/index.yaml");
+        
+        HttpResponseMessage response = await new HttpClient().SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
+
+        var stream = await response.Content.ReadAsStreamAsync();
+        Console.WriteLine("Response Length: " + response.Content.Headers.ContentLength);
+        
+        var streamReader = new StreamReader(stream);
+        var yaml = new YamlStream();
+        yaml.Load(streamReader);
+
+        Console.WriteLine(yaml.Documents.Count);
+    }
+}
