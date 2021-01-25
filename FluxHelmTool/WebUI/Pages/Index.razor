@@ -4,9 +4,18 @@
 @using System.Net
 @using YamlDotNet.RepresentationModel
 @using YamlDotNet.Serialization
+@using BlazorMonacoYaml
 
 <AgnoInputFile OnFileChange="HandleSelection"  />
 
 <button @onclick="myButton">Fetch</button>
 
 <p>@status</p>
+
+<div class="editorContent" style="height: 756px">
+    <MonacoDiffEditorYaml @ref="_yamlDiffEditor"
+                          Id="monacoDiffEditorYaml"
+                          OriginalValue="@leftValue"
+                          ModifiedValue="@rightValue"
+                          CssClass="editor"  />
+</div>

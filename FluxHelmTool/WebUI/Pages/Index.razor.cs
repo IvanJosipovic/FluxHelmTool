@@ -21,18 +21,24 @@ using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using FluxHelmTool;
+using BlazorMonacoYaml;
 
 namespace FluxHelmTool.WebUI.Pages
 {
     public partial class Index
     {
-        string status;
+        public string status;
+        private MonacoDiffEditorYaml _yamlDiffEditor { get; set; }
 
-        YamlNode left;
+        public YamlNode left;
 
-        YamlNode right;
+        public string leftValue;
 
-        async Task HandleSelection(IFileListEntry[] files)
+        public YamlNode right;
+
+        public string rightValue;
+
+        void HandleSelection(IFileListEntry[] files)
         {
             var file = files.FirstOrDefault();
             if (file != null)
@@ -42,6 +48,14 @@ namespace FluxHelmTool.WebUI.Pages
                 yaml.Load(streamReader);
 
                 left = yaml.Documents[0].RootNode;
+
+                var serializer = new SerializerBuilder().Build();
+
+                var yamlStr = new StringWriter();
+
+                serializer.Serialize(yamlStr, left);
+
+                rightValue = yamlStr.ToString();
             }
         }
 
