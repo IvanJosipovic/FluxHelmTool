@@ -1,21 +1,25 @@
 @page "/"
 @using BlazorMonacoYaml
 
-<AgnoInputFile OnFileChange="HandleSelection"  />
-  <div class="form-group">
-    <label for="exampleFormControlSelect1">Versions</label>
-    <select class="form-control" id="exampleFormControlSelect1" @onchange="@(async (ChangeEventArgs x) => {selectedVersion = x.Value.ToString(); await GetRemoteChart();})">
+<div class="form-group row">
+  <div class="col-xs-2">
+    <AgnoInputFile OnFileChange="HandleSelection" />
+  </div>
+  <div class="col-xs-3">
+    <select class="form-control input-sm" id="exampleFormControlSelect1" @onchange="@(async (ChangeEventArgs x) => { selectedVersion = x.Value.ToString(); await GetRemoteChart(); })">
         @foreach (var item in chartVersions)
         {
             <option>@item.Key</option>
         }
     </select>
   </div>
+</div>
+
 @*<button @onclick="GetChartVersions">GetChartVersions</button>
 
 <button @onclick="GetRemoteChart">GetRemoteChart</button>*@
 
-<div class="editorContent" style="height: 756px">
+<div class="editorContent" style="height: 85vh">
     <MonacoDiffEditorYaml @ref="_yamlDiffEditor"
                           Id="monacoDiffEditorYaml"
                           CssClass="editor"  />
