@@ -39,20 +39,15 @@ namespace FluxHelmTool.WebUI.Pages
                 var ms = new MemoryStream();
                 await file.Data.CopyToAsync(ms);
                 ms.Position = 0;
-
                 TextReader stringStream = new StreamReader(ms);
                 var yaml = new YamlStream();
                 yaml.Load(stringStream);
                 
-                left = yaml.Documents[0].RootNode;
+                right = yaml.Documents[0].RootNode;
 
-                var serializer = new SerializerBuilder().Build();
-
-                var yamlStr = new StringWriter();
-
-                serializer.Serialize(yamlStr, left);
-
-                await _yamlDiffEditor.SetOriginalValue(yamlStr.ToString());
+                ms.Position = 0;
+                TextReader outputStream = new StreamReader(ms);
+                await _yamlDiffEditor.SetModifiedValue(outputStream.ReadToEnd());
 
                 GetChartInfo();
 
@@ -64,7 +59,7 @@ namespace FluxHelmTool.WebUI.Pages
 
         public void GetChartInfo()
         {
-            YamlMappingNode spec = ((YamlMappingNode)left).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+            YamlMappingNode spec = ((YamlMappingNode)right).Children[new YamlScalarNode("spec")] as YamlMappingNode;
             YamlMappingNode chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
 
             var repo = chart.Children[new YamlScalarNode("repository")] as YamlScalarNode;
@@ -128,7 +123,7 @@ namespace FluxHelmTool.WebUI.Pages
                                 output.WriteLine("    " + line);
                             }
 
-                            await _yamlDiffEditor.SetModifiedValue(output.ToString());
+                            await _yamlDiffEditor.SetOriginalValue(output.ToString());
                         }
                         break;
                     }

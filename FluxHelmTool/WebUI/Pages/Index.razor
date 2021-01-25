@@ -2,15 +2,18 @@
 @using BlazorMonacoYaml
 
 <AgnoInputFile OnFileChange="HandleSelection"  />
-
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Versions</label>
+    <select class="form-control" id="exampleFormControlSelect1" @onchange="@(async (ChangeEventArgs x) => {selectedVersion = x.Value.ToString(); await GetRemoteChart();})">
+        @foreach (var item in chartVersions)
+        {
+            <option>@item.Key</option>
+        }
+    </select>
+  </div>
 @*<button @onclick="GetChartVersions">GetChartVersions</button>
 
 <button @onclick="GetRemoteChart">GetRemoteChart</button>*@
-
-<br />
-@chartName<br />
-@chartRepo<br />
-@chartVersion<br />
 
 <div class="editorContent" style="height: 756px">
     <MonacoDiffEditorYaml @ref="_yamlDiffEditor"
