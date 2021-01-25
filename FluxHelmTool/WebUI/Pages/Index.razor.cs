@@ -14,22 +14,21 @@ namespace FluxHelmTool.WebUI.Pages
 {
     public partial class Index
     {
-        public string status;
-        private MonacoDiffEditorYaml _yamlDiffEditor { get; set; }
+        MonacoDiffEditorYaml _yamlDiffEditor { get; set; }
 
-        public YamlNode left;
+        YamlNode left;
 
-        public YamlNode right;
+        YamlNode right;
 
-        public string chartRepo;
+        string chartRepo;
 
-        public string chartVersion;
+        string chartVersion;
 
-        public string chartName;
+        string chartName;
 
-        public Dictionary<string, string> chartVersions = new Dictionary<string, string>();
+        Dictionary<string, string> chartVersions = new Dictionary<string, string>();
 
-        public string selectedVersion;
+        string selectedVersion;
 
         async Task HandleSelection(IFileListEntry[] files)
         {
@@ -57,7 +56,7 @@ namespace FluxHelmTool.WebUI.Pages
             }
         }
 
-        public void GetChartInfo()
+        void GetChartInfo()
         {
             YamlMappingNode spec = ((YamlMappingNode)right).Children[new YamlScalarNode("spec")] as YamlMappingNode;
             YamlMappingNode chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
@@ -95,7 +94,7 @@ namespace FluxHelmTool.WebUI.Pages
             }
         }
 
-        public async Task GetRemoteChart()
+        async Task GetRemoteChart()
         {
             var client = new HttpClient();
 
