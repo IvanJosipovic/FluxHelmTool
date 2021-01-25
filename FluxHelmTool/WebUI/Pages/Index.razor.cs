@@ -121,7 +121,14 @@ namespace FluxHelmTool.WebUI.Pages
                             fileContents.Position = 0;
                             TextReader stringStream = new StreamReader(fileContents);
 
-                            await _yamlDiffEditor.SetModifiedValue(stringStream.ReadToEnd());
+                            var output = new StringWriter();
+                            string line = null;
+                            while ((line = stringStream.ReadLine()) != null)
+                            {
+                                output.WriteLine("    " + line);
+                            }
+
+                            await _yamlDiffEditor.SetModifiedValue(output.ToString());
                         }
                         break;
                     }
