@@ -1,21 +1,18 @@
 @page "/"
-@using System.IO
-@using System.Net.Http
-@using System.Net
-@using YamlDotNet.RepresentationModel
-@using YamlDotNet.Serialization
 @using BlazorMonacoYaml
 
 <AgnoInputFile OnFileChange="HandleSelection"  />
 
-<button @onclick="myButton">Fetch</button>
+<button @onclick="GetRemoteChart">GetRemoteChart</button>
 
-<p>@status</p>
+<button @onclick="myButton">Fetch</button>
+<br />
+@chartName<br />
+@chartRepo<br />
+@chartVersion<br />
 
 <div class="editorContent" style="height: 756px">
     <MonacoDiffEditorYaml @ref="_yamlDiffEditor"
                           Id="monacoDiffEditorYaml"
-                          OriginalValue="@leftValue"
-                          ModifiedValue="@rightValue"
                           CssClass="editor"  />
 </div>
