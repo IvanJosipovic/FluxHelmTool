@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest]
         include:
         - os: windows-latest
           RUNTIME: win-x64
@@ -23,13 +23,6 @@ jobs:
           FOLDER: FluxHelmTool.macOS
     steps:
     - uses: actions/checkout@v1
-
-    - name: setup-xamarin
-      if: matrix.os == 'macos-latest'
-      uses: maxim-lobanov/setup-xamarin@v1
-      with:
-        xamarin-mac-version: latest # specify 'latest' keyword to pick up the latest available version
-        xcode-version: latest # set the latest available Xcode 11
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
