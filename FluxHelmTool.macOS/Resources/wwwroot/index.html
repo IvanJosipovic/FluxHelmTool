@@ -7,6 +7,8 @@
     <base href="/" />
     <link href="_content/FluxHelmTool/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="_content/FluxHelmTool/css/app.css" rel="stylesheet" />
+    <link href="_content/BlazorMonacoYaml/lib/monaco-editor-yaml/min/vs/editor/editor.main.css" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -18,5 +20,11 @@
         <a class="dismiss">🗙</a>
     </div>
 </body>
+
+<script src="_content/BlazorMonacoYaml/lib/monaco-editor-yaml/min/vs/loader.js"></script>
+<script>require.config({ paths: { 'vs': '_content/BlazorMonacoYaml/lib/monaco-editor-yaml/min/vs' } });</script>
+<script src="_content/BlazorMonacoYaml/lib/monaco-editor-yaml/min/vs/editor/editor.main.js"></script>
+<script src="_content/BlazorMonaco/jsInterop.js"></script>
+<script src="_content/Agno.BlazorInputFile/inputfile.js"></script>
 
 </html>
