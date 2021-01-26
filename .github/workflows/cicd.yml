@@ -18,9 +18,7 @@ jobs:
         - os: windows-latest
           RUNTIME: win-x64
           FOLDER: FluxHelmTool.Windows
-        - os: macos-latest
-          RUNTIME: osx-x64
-          FOLDER: FluxHelmTool.macOS
+
     steps:
     - uses: actions/checkout@v1
 
