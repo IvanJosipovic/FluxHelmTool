@@ -9,6 +9,8 @@ using YamlDotNet.Serialization;
 using BlazorMonacoYaml;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
+using System.Text;
+using System;
 
 namespace FluxHelmTool.WebUI.Pages
 {
@@ -16,9 +18,7 @@ namespace FluxHelmTool.WebUI.Pages
     {
         MonacoDiffEditorYaml _yamlDiffEditor { get; set; }
 
-        YamlNode left;
-
-        YamlNode right;
+        YamlDocument yaml;
 
         string chartRepo;
 
@@ -42,7 +42,7 @@ namespace FluxHelmTool.WebUI.Pages
                 var yaml = new YamlStream();
                 yaml.Load(stringStream);
                 
-                right = yaml.Documents[0].RootNode;
+                this.yaml = yaml.Documents[0];
 
                 ms.Position = 0;
                 TextReader outputStream = new StreamReader(ms);
@@ -58,7 +58,7 @@ namespace FluxHelmTool.WebUI.Pages
 
         void GetChartInfo()
         {
-            YamlMappingNode spec = ((YamlMappingNode)right).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+            YamlMappingNode spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
             YamlMappingNode chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
 
             var repo = chart.Children[new YamlScalarNode("repository")] as YamlScalarNode;
@@ -69,6 +69,7 @@ namespace FluxHelmTool.WebUI.Pages
 
             var version = chart.Children[new YamlScalarNode("version")] as YamlScalarNode;
             chartVersion = version.Value;
+
             selectedVersion = chartVersion;
         }
 
@@ -102,7 +103,7 @@ namespace FluxHelmTool.WebUI.Pages
 
             Stream gzipStream = new GZipInputStream(stream);
 
-            using (var tarInputStream = new TarInputStream(gzipStream))
+            using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
             {
                 TarEntry entry;
                 while ((entry = tarInputStream.GetNextEntry()) != null)
@@ -115,14 +116,29 @@ namespace FluxHelmTool.WebUI.Pages
                             fileContents.Position = 0;
                             TextReader stringStream = new StreamReader(fileContents);
 
-                            var output = new StringWriter();
+                            var values = new StringWriter();
                             string line = null;
                             while ((line = stringStream.ReadLine()) != null)
                             {
-                                output.WriteLine("    " + line);
+                                values.WriteLine("    " + line);
                             }
 
-                            await _yamlDiffEditor.SetOriginalValue(output.ToString());
+                            YamlMappingNode spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+                            YamlMappingNode chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
+
+                            spec.Children[new YamlScalarNode("values")] = new YamlScalarNode();
+                            chart.Children[new YamlScalarNode("version")] = selectedVersion;
+
+                            var ys = new YamlStream(yaml);
+
+                            var header = new StringBuilder();
+                            ys.Save(new StringWriter(header), false);
+
+                            string cleanedHeader = header.ToString();
+
+                            cleanedHeader = cleanedHeader.Substring(0, cleanedHeader.Length - 10);
+
+                            await _yamlDiffEditor.SetOriginalValue("---" + Environment.NewLine + cleanedHeader + Environment.NewLine + values.ToString());
                         }
                         break;
                     }
