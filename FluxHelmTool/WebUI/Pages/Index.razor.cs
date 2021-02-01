@@ -58,8 +58,8 @@ namespace FluxHelmTool.WebUI.Pages
 
         void GetChartInfo()
         {
-            YamlMappingNode spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
-            YamlMappingNode chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
+            var spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+            var chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
 
             var repo = chart.Children[new YamlScalarNode("repository")] as YamlScalarNode;
             chartRepo = repo.Value;
@@ -97,7 +97,7 @@ namespace FluxHelmTool.WebUI.Pages
 
         async Task GetRemoteChart()
         {
-            var client = new HttpClient();
+            using var client = new HttpClient();
 
             var stream = await client.GetStreamAsync(chartVersions.GetValueOrDefault(selectedVersion));
 
@@ -110,36 +110,35 @@ namespace FluxHelmTool.WebUI.Pages
                 {
                     if (entry.Name.EndsWith("values.yaml"))
                     {
-                        using (var fileContents = new MemoryStream())
+                        using var fileContents = new MemoryStream();
+                        tarInputStream.CopyEntryContents(fileContents);
+                        fileContents.Position = 0;
+                        var stringStream = new StreamReader(fileContents);
+
+                        var values = new StringWriter();
+                        string line = null;
+                        while ((line = stringStream.ReadLine()) != null)
                         {
-                            tarInputStream.CopyEntryContents(fileContents);
-                            fileContents.Position = 0;
-                            TextReader stringStream = new StreamReader(fileContents);
-
-                            var values = new StringWriter();
-                            string line = null;
-                            while ((line = stringStream.ReadLine()) != null)
-                            {
-                                values.WriteLine("    " + line);
-                            }
-
-                            YamlMappingNode spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
-                            YamlMappingNode chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
-
-                            spec.Children[new YamlScalarNode("values")] = new YamlScalarNode();
-                            chart.Children[new YamlScalarNode("version")] = selectedVersion;
-
-                            var ys = new YamlStream(yaml);
-
-                            var header = new StringBuilder();
-                            ys.Save(new StringWriter(header), false);
-
-                            string cleanedHeader = header.ToString();
-
-                            cleanedHeader = cleanedHeader.Substring(0, cleanedHeader.Length - 10);
-
-                            await _yamlDiffEditor.SetOriginalValue("---" + Environment.NewLine + cleanedHeader + Environment.NewLine + values.ToString());
+                            values.WriteLine("    " + line);
                         }
+
+                        var spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+                        var chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
+
+                        spec.Children[new YamlScalarNode("values")] = new YamlScalarNode();
+                        chart.Children[new YamlScalarNode("version")] = selectedVersion;
+
+                        var ys = new YamlStream(yaml);
+
+                        var header = new StringBuilder();
+                        ys.Save(new StringWriter(header), false);
+
+                        string cleanedHeader = header.ToString();
+
+                        cleanedHeader = cleanedHeader[0..^10];
+
+                        await _yamlDiffEditor.SetOriginalValue("---" + Environment.NewLine + cleanedHeader + Environment.NewLine + values.ToString());
+
                         break;
                     }
                 }

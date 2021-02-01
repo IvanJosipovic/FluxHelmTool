@@ -3,7 +3,7 @@
 
 <div class="form-group row">
   <div class="col-xs-4">
-    <AgnoInputFile OnFileChange="HandleSelection" title="" />
+    <AgnoInputFile OnFileChange="HandleSelection"/>
   </div>
   <div class="col-xs-4">
     <select class="form-control input-sm" id="exampleFormControlSelect1" @onchange="@(async (ChangeEventArgs x) => { selectedVersion = x.Value.ToString(); await GetRemoteChart(); })">
