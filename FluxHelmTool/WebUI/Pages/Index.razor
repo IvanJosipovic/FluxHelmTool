@@ -9,7 +9,7 @@
     <select class="form-control input-sm" id="exampleFormControlSelect1" @onchange="@(async (ChangeEventArgs x) => { selectedVersion = x.Value.ToString(); await GetRemoteChart(); })">
         @foreach (var item in chartVersions)
         {
-            <option>@item.Key</option>
+            <option selected="@(item.Key == selectedVersion)" >@item.Key</option>
         }
     </select>
   </div>
