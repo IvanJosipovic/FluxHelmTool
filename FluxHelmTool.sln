@@ -6,8 +6,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluxHelmTool", "FluxHelmToo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluxHelmTool.Windows", "FluxHelmTool.Windows\FluxHelmTool.Windows.csproj", "{D72B8673-BD65-4C2D-8BE2-235213518D17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluxHelmTool.macOS", "FluxHelmTool.macOS\FluxHelmTool.macOS.csproj", "{355B2B48-8720-4FFE-8AEA-078692D879B6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{107BB34D-C9AF-4C7F-8375-979FEE754AE2}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\cicd.yml = .github\workflows\cicd.yml
@@ -69,26 +67,6 @@ Global
 		{D72B8673-BD65-4C2D-8BE2-235213518D17}.Release|x64.Build.0 = Release|Any CPU
 		{D72B8673-BD65-4C2D-8BE2-235213518D17}.Release|x86.ActiveCfg = Release|Any CPU
 		{D72B8673-BD65-4C2D-8BE2-235213518D17}.Release|x86.Build.0 = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|x64.Build.0 = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Debug|x86.Build.0 = Debug|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|iPhone.Build.0 = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|x64.ActiveCfg = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|x64.Build.0 = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|x86.ActiveCfg = Release|Any CPU
-		{355B2B48-8720-4FFE-8AEA-078692D879B6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

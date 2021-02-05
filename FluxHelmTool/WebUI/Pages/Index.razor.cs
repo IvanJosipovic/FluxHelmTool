@@ -41,7 +41,7 @@ namespace FluxHelmTool.WebUI.Pages
                 TextReader stringStream = new StreamReader(ms);
                 var yaml = new YamlStream();
                 yaml.Load(stringStream);
-                
+
                 this.yaml = yaml.Documents[0];
 
                 ms.Position = 0;
