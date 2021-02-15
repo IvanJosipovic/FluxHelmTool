@@ -95,7 +95,8 @@ jobs:
 
     - name: Zip Files
       run: |
-        zip -r dist/FluxHelmTool-win-x64-win-x64.zip FluxHelmTool-win-x64/
+        mkdir dist
+        zip -r dist/FluxHelmTool-win-x64.zip FluxHelmTool-win-x64/
 
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
