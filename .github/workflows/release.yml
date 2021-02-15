@@ -96,6 +96,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: FluxHelmTool-win-x64
+        path: FluxHelmTool-win-x64
 
     - name: Zip Files
       run: |
