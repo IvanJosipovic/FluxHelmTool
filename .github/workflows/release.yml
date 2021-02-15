@@ -30,7 +30,7 @@ jobs:
       shell: pwsh
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v2.2.2
       with:
         name: new_tag.config
         path: new_tag.config
@@ -76,7 +76,7 @@ jobs:
       run: dotnet publish -r ${{matrix.RUNTIME}} -c Release -p:SelfContained=true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:Version=${{ steps.version.outputs.value }}
       shell: pwsh
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: FluxHelmTool-${{matrix.RUNTIME}}
         path: ${{matrix.FOLDER}}/bin/Release/netcoreapp3.1/${{matrix.RUNTIME}}/publish
