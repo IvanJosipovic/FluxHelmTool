@@ -24,7 +24,6 @@ jobs:
 
     - name: Set Version
       run: |
-        
         $new_tag = "${{ steps.semantic.outputs.new_release_version }}";
 
         if([string]::IsNullOrEmpty($new_tag))
