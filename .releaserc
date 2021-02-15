@@ -1,5 +1,4 @@
 {
-  "repositoryUrl": "https://github.com/IvanJosipovic/FluxHelmTool",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
