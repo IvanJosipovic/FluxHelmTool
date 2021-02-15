@@ -88,7 +88,7 @@ namespace FluxHelmTool.WebUI.Pages
 
             foreach (YamlNode item in items)
             {
-                var version = (item[new YamlScalarNode("version")] as YamlScalarNode).Value;
+                var version = (item[new YamlScalarNode("version")] as YamlScalarNode).Value.TrimStart('v');
 
                 var url = ((item[new YamlScalarNode("urls")] as YamlSequenceNode).Children.First() as YamlScalarNode).Value;
                 chartVersions.Add(version, url);
@@ -99,7 +99,14 @@ namespace FluxHelmTool.WebUI.Pages
         {
             using var client = new HttpClient();
 
-            var stream = await client.GetStreamAsync(chartVersions.GetValueOrDefault(selectedVersion));
+            string url = chartVersions.GetValueOrDefault(selectedVersion);
+
+            if (Uri.TryCreate(url, UriKind.Relative, out Uri result))
+            {
+                url = new Uri(new Uri(chartRepo), url).ToString();
+            }
+
+            var stream = await client.GetStreamAsync(url);
 
             Stream gzipStream = new GZipInputStream(stream);
 
