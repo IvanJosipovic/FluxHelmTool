@@ -92,7 +92,10 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: FluxHelmTool-win-x64
-        path: dist/FluxHelmTool-win-x64
+
+    - name: Zip Files
+      run: |
+        zip -r dist/FluxHelmTool-win-x64-win-x64.zip FluxHelmTool-win-x64/
 
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
