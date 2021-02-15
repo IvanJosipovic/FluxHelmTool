@@ -32,7 +32,7 @@ jobs:
       working-directory: ${{matrix.FOLDER}}
       run: dotnet publish -r ${{matrix.RUNTIME}} -c Release -p:SelfContained=true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: FluxHelmTool-${{matrix.RUNTIME}}
         path: ${{matrix.FOLDER}}/bin/Release/netcoreapp3.1/${{matrix.RUNTIME}}/publish
