@@ -24,8 +24,13 @@ jobs:
 
     - name: Set Version
       run: |
-        $new_tag = "1.0.0" # Default Value
+        
         $new_tag = "${{ steps.semantic.outputs.new_release_version }}";
+
+        if([string]::IsNullOrEmpty($new_tag))
+        {
+          $new_tag = "1.0.0" # Default Value
+        }
         Write-Output $new_tag;
         Set-Content -Path "new_tag.config" -Value $new_tag;
       shell: pwsh
@@ -63,8 +68,7 @@ jobs:
         $new_tag = (Get-Content -Path "new_tag.config").Trim();
         Remove-Item -Path "new_tag.config";
         Write-Output $new_tag;
-        echo "::set-output name=tag::$($new_tag)"
-        echo "::set-output name=value::$($new_tag.TrimStart('v'))"
+        echo "::set-output name=value::$($new_tag)"
       shell: pwsh
 
     - name: Setup .NET Core
