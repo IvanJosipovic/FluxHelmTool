@@ -7,7 +7,7 @@
       {
         "assets": [
           {
-            "path": "dist/FluxHelmTool-win-x64",
+            "path": "dist/FluxHelmTool-win-x64/**",
             "label": "FluxHelmTool-win-x64"
           }
         ]
