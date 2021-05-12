@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.MobileBlazorBindings.WPF" Version="0.6.62-preview" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="Microsoft.MobileBlazorBindings.WPF" Version="0.6.69-preview" />
   </ItemGroup>
 
   <ItemGroup>

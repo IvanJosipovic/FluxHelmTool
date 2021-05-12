@@ -3,22 +3,35 @@
 
 <div class="form-group row">
   <div class="col-xs-4">
-    <AgnoInputFile OnFileChange="HandleSelection"/>
+    <AgnoInputFile OnFileChange="HandleSelection" />
   </div>
   <div class="col-xs-4">
-    <select class="form-control input-sm" id="exampleFormControlSelect1" @onchange="@(async (ChangeEventArgs x) => { selectedVersion = x.Value.ToString(); await GetRemoteChart(); })">
-        @foreach (var item in chartVersions)
+    <select class="form-control input-sm" @onchange="@(async (ChangeEventArgs x) => { await SetSelectedRelease(x.Value.ToString()); })">
+	    <option selected="" >---</option>
+
+        @foreach (var item in HelmTool.HelmReleases)
         {
-            <option selected="@(item.Key == selectedVersion)" >@item.Key</option>
+            <option selected="@(item == SelectedHelmRelease)" value="@item.Name">@item.Name</option>
         }
     </select>
   </div>
+  <div class="col-xs-4">
+	<select class="form-control input-sm" @onchange="@(async (ChangeEventArgs x) => { SetSelectedVersion(x.Value.ToString()); })">
+		<option selected="" >---</option>
+		@foreach (var item in ChartVersions)
+		{
+			<option selected="@(item == SelectedVersion)" >@item</option>
+		}
+	</select>
+  </div>
+  <div class="col-xs-4">
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="showDependencies" checked="@ShowDependencies" @onchange="@(async (ChangeEventArgs x) => { ShowDependencies = (bool)x.Value; })">
+        <label class="form-check-label" for="showDependencies">Show Dependencies</label>
+      </div>
+  </div>
 </div>
 
-@*<button @onclick="GetChartVersions">GetChartVersions</button>
-
-<button @onclick="GetRemoteChart">GetRemoteChart</button>*@
-
 <div class="editorContent" style="height: 90vh">
-    <MonacoDiffEditorYaml @ref="_yamlDiffEditor" Id="monacoDiffEditorYaml" CssClass="editor" />
+    <MonacoDiffEditorYaml @ref="YamlDiffEditor" Id="monacoDiffEditorYaml" CssClass="editor" />
 </div>

@@ -16,140 +16,102 @@ namespace FluxHelmTool.WebUI.Pages
 {
     public partial class Index
     {
-        MonacoDiffEditorYaml _yamlDiffEditor { get; set; }
+        private MonacoDiffEditorYaml YamlDiffEditor;
 
-        YamlDocument yaml;
+        private HelmTool HelmTool = new HelmTool();
 
-        string chartRepo;
+        private HelmRelease SelectedHelmRelease;
 
-        string chartVersion;
+        private string SelectedVersion;
 
-        string chartName;
+        private List<string> ChartVersions = new List<string>();
 
-        Dictionary<string, string> chartVersions = new Dictionary<string, string>();
-
-        string selectedVersion;
+        bool ShowDependencies = true;
 
         async Task HandleSelection(IFileListEntry[] files)
         {
-            var file = files.FirstOrDefault();
-            if (file != null)
+            foreach (var file in files)
             {
                 var ms = new MemoryStream();
                 await file.Data.CopyToAsync(ms);
                 ms.Position = 0;
-                TextReader stringStream = new StreamReader(ms);
-                var yaml = new YamlStream();
-                yaml.Load(stringStream);
-
-                this.yaml = yaml.Documents[0];
-
-                ms.Position = 0;
-                TextReader outputStream = new StreamReader(ms);
-                await _yamlDiffEditor.SetModifiedValue(outputStream.ReadToEnd());
-
-                GetChartInfo();
-
-                await GetChartVersions();
-
-                await GetRemoteChart();
+                HelmTool.LoadYaml(ms);
             }
         }
 
-        void GetChartInfo()
+        private async Task SetSelectedRelease(string helmReleaseName)
         {
-            var spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
-            var chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
+            var helmRelease = HelmTool.HelmReleases.First(x => x.Name == helmReleaseName);
+            SelectedHelmRelease = helmRelease;
+            ChartVersions = await HelmTool.GetChartVersions(helmRelease);
 
-            var repo = chart.Children[new YamlScalarNode("repository")] as YamlScalarNode;
-            chartRepo = repo.Value;
+            SelectedVersion = helmRelease.ChartVersion;
 
-            var name = chart.Children[new YamlScalarNode("name")] as YamlScalarNode;
-            chartName = name.Value;
+            Serializer serializer = new Serializer();
+            await YamlDiffEditor.SetModifiedValue(serializer.Serialize(helmRelease.Yaml.RootNode));
 
-            var version = chart.Children[new YamlScalarNode("version")] as YamlScalarNode;
-            chartVersion = version.Value;
-
-            selectedVersion = chartVersion;
         }
 
-        async Task GetChartVersions()
+        public void SetSelectedVersion(string version)
         {
-            var stream = await new HttpClient().GetStreamAsync(chartRepo.TrimEnd('/') + "/index.yaml");
-            var streamReader = new StreamReader(stream);
-            var yaml = new YamlStream();
-            yaml.Load(streamReader);
-
-            var mapping = yaml.Documents[0].RootNode as YamlMappingNode;
-
-            var items = (mapping.Children[new YamlScalarNode("entries")] as YamlMappingNode).Children[new YamlScalarNode(chartName)] as YamlSequenceNode;
-
-            chartVersions.Clear();
-
-            foreach (YamlNode item in items)
-            {
-                var version = (item[new YamlScalarNode("version")] as YamlScalarNode).Value.TrimStart('v');
-
-                var url = ((item[new YamlScalarNode("urls")] as YamlSequenceNode).Children.First() as YamlScalarNode).Value;
-                chartVersions.Add(version, url);
-            }
+            SelectedVersion = version;
         }
 
-        async Task GetRemoteChart()
-        {
-            using var client = new HttpClient();
+        //async Task UpdateOriginal()
+        //{
+        //    string resultyaml = GenerateHeader();
 
-            string url = chartVersions.GetValueOrDefault(selectedVersion);
+        //    resultyaml += Environment.NewLine + await GetValues(chartRepo, chartName, selectedVersion);
 
-            if (Uri.TryCreate(url, UriKind.Relative, out Uri result))
-            {
-                url = new Uri(new Uri(chartRepo), url).ToString();
-            }
+        //    if (showDependencies)
+        //    {
+        //        var dependencies = await GetDependencies(chartRepo, chartName, selectedVersion);
 
-            var stream = await client.GetStreamAsync(url);
+        //        foreach (var item in dependencies)
+        //        {
+        //            resultyaml += Environment.NewLine + await GetValues(item.repository, item.name, item.version);
+        //        }
+        //    }
 
-            Stream gzipStream = new GZipInputStream(stream);
+        //    await _yamlDiffEditor.SetOriginalValue(resultyaml);
+        //}
 
-            using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
-            {
-                TarEntry entry;
-                while ((entry = tarInputStream.GetNextEntry()) != null)
-                {
-                    if (entry.Name.EndsWith("values.yaml"))
-                    {
-                        using var fileContents = new MemoryStream();
-                        tarInputStream.CopyEntryContents(fileContents);
-                        fileContents.Position = 0;
-                        var stringStream = new StreamReader(fileContents);
+        //void GetChartInfo()
+        //{
+        //    var spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+        //    var chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
 
-                        var values = new StringWriter();
-                        string line = null;
-                        while ((line = stringStream.ReadLine()) != null)
-                        {
-                            values.WriteLine("    " + line);
-                        }
+        //    var repo = chart.Children[new YamlScalarNode("repository")] as YamlScalarNode;
+        //    chartRepo = repo.Value;
 
-                        var spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
-                        var chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
+        //    var name = chart.Children[new YamlScalarNode("name")] as YamlScalarNode;
+        //    chartName = name.Value;
 
-                        spec.Children[new YamlScalarNode("values")] = new YamlScalarNode();
-                        chart.Children[new YamlScalarNode("version")] = selectedVersion;
+        //    var version = chart.Children[new YamlScalarNode("version")] as YamlScalarNode;
+        //    chartVersion = version.Value;
 
-                        var ys = new YamlStream(yaml);
+        //    selectedVersion = chartVersion;
+        //}
 
-                        var header = new StringBuilder();
-                        ys.Save(new StringWriter(header), false);
+        //string GenerateHeader()
+        //{
+        //    //var spec = ((YamlMappingNode)yaml.RootNode).Children[new YamlScalarNode("spec")] as YamlMappingNode;
+        //    //var chart = spec.Children[new YamlScalarNode("chart")] as YamlMappingNode;
 
-                        string cleanedHeader = header.ToString();
+        //    //spec.Children[new YamlScalarNode("values")] = new YamlScalarNode();
+        //    //chart.Children[new YamlScalarNode("version")] = selectedVersion;
 
-                        cleanedHeader = cleanedHeader[0..^10];
+        //    var ys = new YamlStream(yaml);
 
-                        await _yamlDiffEditor.SetOriginalValue("---" + Environment.NewLine + cleanedHeader + Environment.NewLine + values.ToString());
+        //    var header = new StringBuilder();
+        //    ys.Save(new StringWriter(header), false);
 
-                        break;
-                    }
-                }
-            }
-        }
+        //    string cleanedHeader = header.ToString();
+
+        //    cleanedHeader = cleanedHeader[0..^10];
+
+        //    return "---" + Environment.NewLine + cleanedHeader;
+        //}
+
     }
 }
