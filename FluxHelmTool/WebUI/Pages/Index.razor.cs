@@ -75,9 +75,18 @@ namespace FluxHelmTool.WebUI.Pages
         {
             var lines = SelectedHelmRelease.YamlString.Split(Environment.NewLine);
             var header = new StringBuilder();
+
             foreach (var line in lines)
             {
-                header.AppendLine(line);
+                if (line.StartsWith("      version: "))
+                {
+                    header.AppendLine("      version: " + SelectedVersion);
+                }
+                else
+                {
+                    header.AppendLine(line);
+                }
+
                 if (line == "  values:")
                 {
                     break;
