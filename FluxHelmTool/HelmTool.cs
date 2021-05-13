@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
@@ -18,31 +19,31 @@ namespace FluxHelmTool
 
         public List<HelmRepository> HelmRepositories { get; set; } = new List<HelmRepository>();
 
-        public void LoadYaml(Stream yamls)
+        public void LoadYaml(Stream yamlStream)
         {
-            TextReader stringStream = new StreamReader(yamls);
-            var yaml = new YamlStream();
-            yaml.Load(stringStream);
-
-            foreach (var item in yaml.Documents)
+            foreach (var yamlString in Regex.Split(new StreamReader(yamlStream).ReadToEnd(), @"---\r\n"))
             {
-                var kind = ((item.RootNode as YamlMappingNode).Children[new YamlScalarNode("kind")] as YamlScalarNode).Value;
+                var yaml = new YamlStream();
+                yaml.Load(new StringReader(yamlString));
 
-                switch (kind)
+                foreach (var item in yaml.Documents)
                 {
-                    case "HelmRepository":
-                        HelmRepositories.Add(new HelmRepository() { Yaml = item });
-                        break;
-                    case "HelmRelease":
-                        HelmReleases.Add(new HelmRelease() { Yaml = item }) ;
-                        break;
-                    default:
-                        break;
+                    switch (((item.RootNode as YamlMappingNode).Children[new YamlScalarNode("kind")] as YamlScalarNode).Value)
+                    {
+                        case "HelmRepository":
+                            HelmRepositories.Add(new HelmRepository() { Yaml = item, YamlString = yamlString });
+                            break;
+                        case "HelmRelease":
+                            HelmReleases.Add(new HelmRelease() { Yaml = item, YamlString = yamlString });
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
 
-        async Task<List<HelmChart>> GetDependencies(HelmRelease helmRelease, string version)
+        public async Task<List<HelmChart>> GetDependencies(HelmRelease helmRelease, string version)
         {
             using var client = new HttpClient();
 
@@ -86,7 +87,7 @@ namespace FluxHelmTool
             var repo = HelmRepositories.First(x => x.Name == helmRelease.RepositoryName).Url;
 
             using var stream = await new HttpClient().GetStreamAsync(repo.TrimEnd('/') + "/index.yaml");
-            var streamReader = new StreamReader(stream);
+            using var streamReader = new StreamReader(stream);
             var yaml = new YamlStream();
             yaml.Load(streamReader);
 
@@ -106,7 +107,7 @@ namespace FluxHelmTool
             return url;
         }
 
-        private async Task<string> GetValues(HelmRelease helmRelease, string version)
+        public async Task<string> GetValues(HelmRelease helmRelease, string version)
         {
             using var client = new HttpClient();
 
@@ -114,8 +115,7 @@ namespace FluxHelmTool
 
             var stream = await client.GetStreamAsync(url);
 
-            Stream gzipStream = new GZipInputStream(stream);
-
+            using Stream gzipStream = new GZipInputStream(stream);
             using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
             {
                 TarEntry entry;
@@ -145,14 +145,15 @@ namespace FluxHelmTool
 
         public async Task<List<string>> GetChartVersions(HelmRelease helmRelease)
         {
-            var stream = await new HttpClient().GetStreamAsync(HelmRepositories.First(x => x.Name == helmRelease.RepositoryName).Url.TrimEnd('/') + "/index.yaml");
-            var streamReader = new StreamReader(stream);
+            using var stream = await new HttpClient().GetStreamAsync(HelmRepositories.First(x => x.Name == helmRelease.RepositoryName).Url.TrimEnd('/') + "/index.yaml");
+            using var streamReader = new StreamReader(stream);
+            
             var yaml = new YamlStream();
             yaml.Load(streamReader);
 
-            var mapping = yaml.Documents[0].RootNode as YamlMappingNode;
-
-            var items = (mapping.Children[new YamlScalarNode("entries")] as YamlMappingNode).Children[new YamlScalarNode(helmRelease.ChartName)] as YamlSequenceNode;
+            var items = ((yaml.Documents[0].RootNode as YamlMappingNode)
+                        .Children[new YamlScalarNode("entries")] as YamlMappingNode)
+                        .Children[new YamlScalarNode(helmRelease.ChartName)] as YamlSequenceNode;
 
             var versions = new List<string>();
 

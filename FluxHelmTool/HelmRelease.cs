@@ -7,13 +7,13 @@ namespace FluxHelmTool
 {
     public class HelmRelease
     {
-        public string OriginalString { get; set; }
+        public string YamlString { get; set; }
 
         public YamlDocument Yaml { get; set; }
 
         public string Name => (((Yaml.RootNode as YamlMappingNode)
-                        .Children[new YamlScalarNode("metadata")] as YamlMappingNode)
-                        .Children[new YamlScalarNode("name")] as YamlScalarNode).Value;
+                                .Children[new YamlScalarNode("metadata")] as YamlMappingNode)
+                                .Children[new YamlScalarNode("name")] as YamlScalarNode).Value;
 
         public string ChartName => (((((Yaml.RootNode as YamlMappingNode)
                                 .Children[new YamlScalarNode("spec")] as YamlMappingNode)

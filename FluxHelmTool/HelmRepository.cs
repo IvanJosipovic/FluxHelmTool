@@ -7,6 +7,8 @@ namespace FluxHelmTool
 {
     public class HelmRepository
     {
+        public string YamlString { get; set; }
+
         public YamlDocument Yaml { get; set; }
 
         public string Name => (((Yaml.RootNode as YamlMappingNode)

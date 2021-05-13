@@ -16,7 +16,7 @@
     </select>
   </div>
   <div class="col-xs-4">
-	<select class="form-control input-sm" @onchange="@(async (ChangeEventArgs x) => { SetSelectedVersion(x.Value.ToString()); })">
+	<select class="form-control input-sm" @onchange="@(async (ChangeEventArgs x) => { await SetSelectedVersion(x.Value.ToString()); })">
 		<option selected="" >---</option>
 		@foreach (var item in ChartVersions)
 		{
