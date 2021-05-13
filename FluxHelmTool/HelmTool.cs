@@ -147,7 +147,7 @@ namespace FluxHelmTool
         {
             using var stream = await new HttpClient().GetStreamAsync(HelmRepositories.First(x => x.Name == helmRelease.RepositoryName).Url.TrimEnd('/') + "/index.yaml");
             using var streamReader = new StreamReader(stream);
-            
+
             var yaml = new YamlStream();
             yaml.Load(streamReader);
 
