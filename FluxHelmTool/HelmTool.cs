@@ -19,14 +19,14 @@ namespace FluxHelmTool
 
         public List<HelmRepository> HelmRepositories { get; set; } = new List<HelmRepository>();
 
-        public void LoadYaml(Stream yamlStream)
+        public async Task LoadYaml(Stream yamlStream)
         {
-            foreach (var yamlString in Regex.Split(new StreamReader(yamlStream).ReadToEnd(), @"---\r\n"))
+            foreach (var yamlString in Regex.Split(await new StreamReader(yamlStream).ReadToEndAsync(), @"---\r\n"))
             {
-                var yaml = new YamlStream();
+                YamlStream yaml = new YamlStream();
                 yaml.Load(new StringReader(yamlString));
 
-                foreach (var item in yaml.Documents)
+                foreach (YamlDocument item in yaml.Documents)
                 {
                     switch (((item.RootNode as YamlMappingNode).Children[new YamlScalarNode("kind")] as YamlScalarNode).Value)
                     {
@@ -35,8 +35,6 @@ namespace FluxHelmTool
                             break;
                         case "HelmRelease":
                             HelmReleases.Add(new HelmRelease() { Yaml = item, YamlString = yamlString });
-                            break;
-                        default:
                             break;
                     }
                 }

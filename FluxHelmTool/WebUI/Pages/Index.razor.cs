@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Agno.BlazorInputFile;
 using System.IO;
 using BlazorMonacoYaml;
-using YamlDotNet.RepresentationModel;
 using System.Text;
 using System;
+using Microsoft.AspNetCore.Components;
+using Tewr.Blazor.FileReader;
 
 namespace FluxHelmTool.WebUI.Pages
 {
     public partial class Index
     {
+        [Inject] private IFileReaderService FileReaderService { get; set; }
+
         private MonacoDiffEditorYaml YamlDiffEditor;
 
         private HelmTool HelmTool = new HelmTool();
@@ -22,16 +24,18 @@ namespace FluxHelmTool.WebUI.Pages
 
         private List<string> ChartVersions = new List<string>();
 
-        private bool ShowDependencies = false;
+        private bool ShowDependencies;
 
-        private async Task HandleSelection(IFileListEntry[] files)
+        private ElementReference inputTypeFileElement;
+
+        public async Task ReadFiles()
         {
-            foreach (var file in files)
+            foreach (var file in await FileReaderService.CreateReference(inputTypeFileElement).EnumerateFilesAsync())
             {
-                var ms = new MemoryStream();
-                await file.Data.CopyToAsync(ms);
-                ms.Position = 0;
-                HelmTool.LoadYaml(ms);
+                await using (Stream stream = await file.OpenReadAsync())
+                {
+                    await HelmTool.LoadYaml(stream);
+                }
             }
         }
 
