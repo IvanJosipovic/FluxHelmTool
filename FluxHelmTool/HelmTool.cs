@@ -41,11 +41,11 @@ namespace FluxHelmTool
             }
         }
 
-        public async Task<List<HelmChart>> GetDependencies(HelmRelease helmRelease, string version)
+        public async Task<List<HelmChart>> GetDependencies(string repoName, string chartName, string version)
         {
             using var client = new HttpClient();
 
-            string url = await GetChartUrl(helmRelease, version);
+            string url = await GetChartUrl(repoName, chartName, version);
 
             var stream = await client.GetStreamAsync(url);
 
@@ -80,9 +80,9 @@ namespace FluxHelmTool
             return new List<HelmChart>();
         }
 
-        private async Task<string> GetChartUrl(HelmRelease helmRelease, string version)
+        private async Task<string> GetChartUrl(string repoName, string chartName, string version)
         {
-            var repo = HelmRepositories.First(x => x.Name == helmRelease.RepositoryName).Url;
+            var repo = HelmRepositories.First(x => x.Name == repoName).Url;
 
             using var stream = await new HttpClient().GetStreamAsync(repo.TrimEnd('/') + "/index.yaml");
             using var streamReader = new StreamReader(stream);
@@ -91,7 +91,7 @@ namespace FluxHelmTool
 
             var mapping = yaml.Documents[0].RootNode as YamlMappingNode;
 
-            var items = (mapping.Children[new YamlScalarNode("entries")] as YamlMappingNode).Children[new YamlScalarNode(helmRelease.ChartName)] as YamlSequenceNode;
+            var items = (mapping.Children[new YamlScalarNode("entries")] as YamlMappingNode).Children[new YamlScalarNode(chartName)] as YamlSequenceNode;
 
             var item = items.First(x => (x[new YamlScalarNode("version")] as YamlScalarNode).Value == version);
 
@@ -105,11 +105,11 @@ namespace FluxHelmTool
             return url;
         }
 
-        public async Task<string> GetValues(HelmRelease helmRelease, string version)
+        public async Task<string> GetValues(string repoName, string helmChart, string version)
         {
             using var client = new HttpClient();
 
-            string url = await GetChartUrl(helmRelease, version);
+            string url = await GetChartUrl(repoName, helmChart, version);
 
             var stream = await client.GetStreamAsync(url);
 

@@ -60,16 +60,16 @@ namespace FluxHelmTool.WebUI.Pages
         {
             string resultyaml = GenerateHeader();
 
-            resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease, SelectedVersion);
+            resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.Name, SelectedVersion);
 
             if (ShowDependencies)
             {
-                var dependencies = await HelmTool.GetDependencies(SelectedHelmRelease, SelectedVersion);
+                var dependencies = await HelmTool.GetDependencies(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.Name, SelectedVersion);
 
-                //foreach (var item in dependencies)
-                //{
-                //    resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease, item.version);
-                //}
+                foreach (var item in dependencies)
+                {
+                    resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease.RepositoryName, item.name, item.version);
+                }
             }
 
             await YamlDiffEditor.SetOriginalValue(resultyaml);

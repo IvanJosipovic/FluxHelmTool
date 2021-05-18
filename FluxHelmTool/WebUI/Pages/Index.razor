@@ -25,7 +25,7 @@
   </div>
   <div class="col-xs-2">
       <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="showDependencies" checked="@ShowDependencies" @onchange="@(async (ChangeEventArgs x) => { ShowDependencies = (bool)x.Value; })">
+        <input type="checkbox" class="form-check-input" id="showDependencies" checked="@ShowDependencies" @onchange="@(async (ChangeEventArgs x) => { ShowDependencies = (bool)x.Value; await UpdateOriginal(); })">
         <label class="form-check-label" for="showDependencies">Show Dependencies</label>
       </div>
   </div>
