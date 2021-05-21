@@ -45,6 +45,7 @@ namespace FluxHelmTool.WebUI.Pages
             SelectedHelmRelease = helmRelease;
             ChartVersions = await HelmTool.GetChartVersions(helmRelease);
             SelectedVersion = helmRelease.ChartVersion;
+            StateHasChanged();
             await YamlDiffEditor.SetModifiedValue(helmRelease.YamlString);
             await UpdateOriginal();
         }
@@ -60,11 +61,11 @@ namespace FluxHelmTool.WebUI.Pages
         {
             string resultyaml = GenerateHeader();
 
-            resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.Name, SelectedVersion);
+            resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.ChartName, SelectedVersion);
 
             if (ShowDependencies)
             {
-                var dependencies = await HelmTool.GetDependencies(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.Name, SelectedVersion);
+                var dependencies = await HelmTool.GetDependencies(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.ChartName, SelectedVersion);
 
                 foreach (var item in dependencies)
                 {
