@@ -15,6 +15,10 @@ namespace FluxHelmTool
                                 .Children[new YamlScalarNode("metadata")] as YamlMappingNode)
                                 .Children[new YamlScalarNode("name")] as YamlScalarNode).Value;
 
+        public string Namespace => (((Yaml.RootNode as YamlMappingNode)
+                        .Children[new YamlScalarNode("metadata")] as YamlMappingNode)
+                        .Children[new YamlScalarNode("namespace")] as YamlScalarNode).Value;
+
         public string ChartName => (((((Yaml.RootNode as YamlMappingNode)
                                 .Children[new YamlScalarNode("spec")] as YamlMappingNode)
                                 .Children[new YamlScalarNode("chart")] as YamlMappingNode)

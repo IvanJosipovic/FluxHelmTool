@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Tar;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -31,10 +32,20 @@ namespace FluxHelmTool
                     switch (((item.RootNode as YamlMappingNode).Children[new YamlScalarNode("kind")] as YamlScalarNode).Value)
                     {
                         case "HelmRepository":
-                            HelmRepositories.Add(new HelmRepository() { Yaml = item, YamlString = yamlString });
+                            var helmRepository = new HelmRepository() { Yaml = item, YamlString = yamlString };
+                            if (HelmRepositories.Any(x => x.Name == helmRepository.Name && x.Namespace == helmRepository.Namespace))
+                            {
+                                HelmRepositories.RemoveAll(x => x.Name == helmRepository.Name && x.Namespace == helmRepository.Namespace);
+                            }
+                            HelmRepositories.Add(helmRepository);
                             break;
                         case "HelmRelease":
-                            HelmReleases.Add(new HelmRelease() { Yaml = item, YamlString = yamlString });
+                            var helmRelease = new HelmRelease() { Yaml = item, YamlString = yamlString };
+                            if (HelmRepositories.Any(x => x.Name == helmRelease.Name && x.Namespace == helmRelease.Namespace))
+                            {
+                                HelmRepositories.RemoveAll(x => x.Name == helmRelease.Name && x.Namespace == helmRelease.Namespace);
+                            }
+                            HelmReleases.Add(helmRelease);
                             break;
                     }
                 }
