@@ -6,14 +6,12 @@ using BlazorMonacoYaml;
 using System.Text;
 using System;
 using Microsoft.AspNetCore.Components;
-using Tewr.Blazor.FileReader;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace FluxHelmTool.WebUI.Pages
 {
     public partial class Index
     {
-        [Inject] private IFileReaderService FileReaderService { get; set; }
-
         private MonacoDiffEditorYaml YamlDiffEditor;
 
         private HelmTool HelmTool = new HelmTool();
@@ -28,16 +26,16 @@ namespace FluxHelmTool.WebUI.Pages
 
         private ElementReference inputTypeFileElement;
 
-        public async Task ReadFiles()
+        public async Task ReadFiles(InputFileChangeEventArgs e)
         {
-            foreach (var file in await FileReaderService.CreateReference(inputTypeFileElement).EnumerateFilesAsync())
+            foreach (var file in e.GetMultipleFiles(100))
             {
-                await using (Stream stream = await file.OpenReadAsync())
+                using (Stream stream = file.OpenReadStream())
                 {
                     await HelmTool.LoadYaml(stream);
                 }
             }
-        }
+         }
 
         private async Task SetSelectedRelease(string helmReleaseName)
         {

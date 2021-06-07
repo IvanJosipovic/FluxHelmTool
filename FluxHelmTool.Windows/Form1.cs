@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Tewr.Blazor.FileReader;
 
 namespace FluxHelmTool.Windows
 {
@@ -22,7 +21,6 @@ namespace FluxHelmTool.Windows
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddBlazorWebView();
-            serviceCollection.AddFileReaderService();
 
             blazorWebView1.HostPage = @"wwwroot\index.html";
             blazorWebView1.Services = serviceCollection.BuildServiceProvider();

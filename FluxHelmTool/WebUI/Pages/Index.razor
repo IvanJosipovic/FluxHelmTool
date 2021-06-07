@@ -3,7 +3,7 @@
 
 <div class="form-group row">
   <div class="col-xs-4">
-	<input type="file" @ref="inputTypeFileElement" multiple @onchange="ReadFiles" />
+	<InputFile type="file" multiple OnChange="@ReadFiles"  />
   </div>
   <div class="col-xs-3">
     <select class="form-control input-sm" @onchange="@(async (ChangeEventArgs x) => { await SetSelectedRelease(x.Value.ToString()); })">
