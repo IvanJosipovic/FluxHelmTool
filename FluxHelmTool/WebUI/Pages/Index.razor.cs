@@ -24,8 +24,6 @@ namespace FluxHelmTool.WebUI.Pages
 
         private bool ShowDependencies;
 
-        private ElementReference inputTypeFileElement;
-
         public async Task ReadFiles(InputFileChangeEventArgs e)
         {
             foreach (var file in e.GetMultipleFiles(100))
@@ -57,6 +55,11 @@ namespace FluxHelmTool.WebUI.Pages
 
         private async Task UpdateOriginal()
         {
+            if (SelectedVersion == null)
+            {
+                return;
+            }
+
             string resultyaml = GenerateHeader();
 
             resultyaml += Environment.NewLine + await HelmTool.GetValues(SelectedHelmRelease.RepositoryName, SelectedHelmRelease.ChartName, SelectedVersion);
