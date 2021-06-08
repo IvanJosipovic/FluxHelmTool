@@ -1,3 +1,3 @@
 # FluxHelmTool
 
-This is a tool which helps manage [Flux HelmReleases](https://github.com/fluxcd/helm-operator)
+This is a tool which helps manage [Flux2 HelmReleases](https://fluxcd.io/docs/components/helm/)
