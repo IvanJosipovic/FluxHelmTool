@@ -24,7 +24,7 @@ namespace FluxHelmTool.WebUI.Pages
 
         private bool ShowDependencies;
 
-        public async Task ReadFiles(InputFileChangeEventArgs e)
+        private async Task ReadFiles(InputFileChangeEventArgs e)
         {
             foreach (var file in e.GetMultipleFiles(100))
             {
@@ -46,7 +46,7 @@ namespace FluxHelmTool.WebUI.Pages
             await UpdateOriginal();
         }
 
-        public async Task SetSelectedVersion(string version)
+        private async Task SetSelectedVersion(string version)
         {
             SelectedVersion = version;
 
@@ -86,7 +86,7 @@ namespace FluxHelmTool.WebUI.Pages
             {
                 if (line.StartsWith("      version: "))
                 {
-                    header.AppendLine("      version: " + SelectedVersion);
+                    header.AppendLine($"      version: {SelectedVersion}");
                 }
                 else
                 {
