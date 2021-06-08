@@ -1,15 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <IsShippingPackage>false</IsShippingPackage>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.MobileBlazorBindings.WPF" Version="0.6.52-preview" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="6.0.0-preview.4.21253.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,8 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\index.html">
+    <Content Update="wwwroot\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
 </Project>

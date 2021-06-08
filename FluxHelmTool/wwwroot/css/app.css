@@ -182,21 +182,15 @@ app {
     }
 }
 
-.editor {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+.monaco-editor-container {
+    height: 90vh;
+    border: 1px solid gray;
 }
 
-.editorError {
-    color: red !important;
-    background: #f2d9d8;
-    cursor: help;
+.decorationGlyphMarginClass {
+    background: red;
 }
 
-.editorErrorGlyph {
-    color: red;
-    font-size: 19px;
-    margin-left: 5px;
-    cursor: help;
+.decorationContentClass {
+    background: lightblue;
 }
