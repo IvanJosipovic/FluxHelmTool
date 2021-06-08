@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace FluxHelmTool.Windows
@@ -55,7 +56,7 @@ namespace FluxHelmTool.Windows
             this.Controls.Add(this.blazorWebView1);
             this.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.Name = "FluxHelmTool";
-            this.Text = "FluxHelmTool";
+            this.Text = "FluxHelmTool " + typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
             this.ResumeLayout(false);
 
         }
