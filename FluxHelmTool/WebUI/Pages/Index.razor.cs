@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text;
 using System;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using BlazorMonaco;
 
@@ -101,47 +100,31 @@ namespace FluxHelmTool.WebUI.Pages
 
             return header.ToString();
         }
+
         private DiffEditorConstructionOptions DiffEditorConstructionOptions(MonacoDiffEditor editor)
         {
             return new DiffEditorConstructionOptions
             {
-                OriginalEditable = false
+                AutomaticLayout = true,
+                OriginalEditable = false,
+                IgnoreTrimWhitespace = false
             };
         }
+
         private async Task EditorOnDidInit(MonacoEditorBase editor)
         {
             // Get or create the original model
-            TextModel original_model = await MonacoEditorBase.GetModel("sample-diff-editor-originalModel");
-            if (original_model == null)
-            {
-                var original_value = "\"use strict\";\n" +
-                                "function Person(age) {\n" +
-                                "	if (age) {\n" +
-                                "		this.age = age;\n" +
-                                "	}\n" +
-                                "}\n" +
-                                "Person.prototype.getAge = function () {\n" +
-                                "	return this.age;\n" +
-                                "};\n";
-                original_model = await MonacoEditorBase.CreateModel(original_value, "javascript", "sample-diff-editor-originalModel");
-            }
+            TextModel original_model = await MonacoEditorBase.CreateModel("Hoto: Select HelmRepository and HelmChart yamls to begin", "yaml");
 
             // Get or create the modified model
-            TextModel modified_model = await MonacoEditorBase.GetModel("sample-diff-editor-modifiedModel");
-            if (modified_model == null)
+            TextModel modified_model = await MonacoEditorBase.CreateModel("", "yaml");
+
+            // Set the editor model
+            await YamlDiffEditor.SetModel(new DiffEditorModel
             {
-                var modified_value = "\"don't use strict\";\n" +
-                                "furction Person(age_is_just_a_number) {\n" +
-                                "	if (age_is_just_a_number) {\n" +
-                                "		this.age_is_just_a_number = age_is_just_a_number;\n" +
-                                "	}\n" +
-                                "}\n" +
-                                "Person.prototype.getAge = function () {\n" +
-                                "	return this.age_is_just_a_number;\n" +
-                                "};\n" +
-                                "//Really, it is just a number people!";
-                modified_model = await MonacoEditorBase.CreateModel(modified_value, "javascript", "sample-diff-editor-modifiedModel");
-            }
+                Original = original_model,
+                Modified = modified_model
+            });
         }
     }
 }
