@@ -1,5 +1,5 @@
 @page "/"
-@using BlazorMonacoYaml
+@using BlazorMonaco
 
 <div class="form-group row">
   <div class="col-xs-4">
@@ -31,6 +31,4 @@
   </div>
 </div>
 
-<div class="editorContent" style="height: 90vh">
-    <MonacoDiffEditorYaml @ref="YamlDiffEditor" Id="monacoDiffEditorYaml" CssClass="editor" />
-</div>
+ <MonacoDiffEditor @ref="YamlDiffEditor" Id="monacoDiffEditorYaml" ConstructionOptions="DiffEditorConstructionOptions" OnDidInit="EditorOnDidInit" />
