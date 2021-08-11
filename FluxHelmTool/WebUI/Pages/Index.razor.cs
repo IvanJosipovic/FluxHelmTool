@@ -114,7 +114,7 @@ namespace FluxHelmTool.WebUI.Pages
         private async Task EditorOnDidInit(MonacoEditorBase editor)
         {
             // Get or create the original model
-            TextModel original_model = await MonacoEditorBase.CreateModel("Hoto: Select HelmRepository and HelmChart yamls to begin", "yaml");
+            TextModel original_model = await MonacoEditorBase.CreateModel("Howto: Select HelmRepository and HelmChart yamls to begin", "yaml");
 
             // Get or create the modified model
             TextModel modified_model = await MonacoEditorBase.CreateModel("", "yaml");
