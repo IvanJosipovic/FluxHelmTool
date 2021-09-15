@@ -78,7 +78,7 @@ jobs:
 
     - name: Publish
       working-directory: ${{matrix.FOLDER}}
-      run: dotnet publish -r ${{matrix.RUNTIME}} -c Release --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ steps.version.outputs.value }} -o bin/Release/publish
+      run: dotnet publish -r ${{matrix.RUNTIME}} -c Release --self-contained -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ steps.version.outputs.value }} -o bin/Release/publish
       shell: pwsh
 
     - uses: actions/upload-artifact@v2
