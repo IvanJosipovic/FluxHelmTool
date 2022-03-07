@@ -35,7 +35,7 @@ jobs:
       shell: pwsh
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2.2.2
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: new_tag.config
         path: new_tag.config
